@@ -1,10 +1,8 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Swal from 'sweetalert2';
-
-
 
 function Register() {
   const navigate = useNavigate();
@@ -13,16 +11,47 @@ function Register() {
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
   useEffect(() => {
-      const access = localStorage.getItem('access');
-      const user = JSON.parse(localStorage.getItem('user'));
+    const access = localStorage.getItem('access');
+    const user = JSON.parse(localStorage.getItem('user'));
 
-      if (access) {
-        navigate(user.admin_user? "/admin_dashboard" : "/dashboard");
-      }
-    }, [navigate]);
+    if (access) {
+      navigate(user.admin_user ? "/admin_dashboard" : "/dashboard");
+    }
+  }, [navigate]);
+
+  const validateForm = () => {
+    const { username, email, password } = form;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[A-Za-z0-9]+$/;
+
+    if (!emailRegex.test(email)) {
+      Swal.fire({ icon: 'warning', title: 'Invalid Email', text: 'Please enter a valid email address.' });
+      return false;
+    }
+
+    if (password.length < 8) {
+      Swal.fire({ icon: 'warning', title: 'Weak Password', text: 'Password must be at least 8 characters long.' });
+      return false;
+    }
+
+    if (!usernameRegex.test(username)) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid Username',
+        text: 'Username should only contain letters and numbers (no special characters).'
+      });
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     try {
       await axios.post("http://localhost:8000/api/register/", form);
 
@@ -47,11 +76,10 @@ function Register() {
       });
 
       console.log(err);
-    } 
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);
-
   const togglePassword = () => setShowPassword(!showPassword);
   const navigateLogin = () => navigate("/login");
 
@@ -127,7 +155,6 @@ function Register() {
         </form>
       </div>
     </div>
-
   );
 }
 
