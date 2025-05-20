@@ -9,8 +9,8 @@ A simple full-stack user authentication system featuring:
 
 ---
 
-## Project Structure
-
+## Project video
+- LINK : https://youtu.be/qvRxt_pG77w
 
 ---
 
